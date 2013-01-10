@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	<scopes>
+		<scope>test</scope>
+		<scope>provided</scope>
+	</scopes>
+
+	<exclusions>
+		<artifact>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<description>A dependência %s não é permitida. Utilize org.jboss.spec.javax.ejb:jboss-ejb-api_3.1_spec:${ejbVersion}</description>
+		</artifact>
+		<artifact>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<description>A dependência %s não é permitida. Utilize log4j:log4j:${log4jVersion}</description>
+		</artifact>
+	</exclusions>
+	
+	<syntax>
+	    <artifact>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<version>${ejbVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>	    
+	</syntax>
+
+</configuration>
