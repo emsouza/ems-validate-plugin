@@ -3,7 +3,7 @@
 <configuration>
 	<scopes>
 		<scope>test</scope>
-		<scope>provided</scope>
+		<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
 	</scopes>
 
 	<exclusions>
@@ -25,7 +25,127 @@
 			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
 			<version>${ejbVersion}</version>
 			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
-		</artifact>	    
+		</artifact>
+		<artifact>
+			<groupId>com.google.gwt</groupId>
+			<artifactId>gwt-servlet</artifactId>
+			<version>${gwtVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<version>${ejbVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernateVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.jboss.ejb3</groupId>
+			<artifactId>jboss-ejb3-ext-api</artifactId>
+			<version>${ejbExtVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernateVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.jboss.spec.javax.interceptor</groupId>
+			<artifactId>jboss-interceptors-api_1.1_spec</artifactId>
+			<version>${interceptorsVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<version>${jpaVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4jVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>net.sf.gilead</groupId>
+			<artifactId>gilead-core</artifactId>
+			<version>${gileadVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>net.sf.gilead</groupId>
+			<artifactId>gilead-core</artifactId>
+			<version>${gileadVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>net.sf.gilead</groupId>
+			<artifactId>gilead-hibernate</artifactId>
+			<version>${gileadVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>net.sf.gilead</groupId>
+			<artifactId>gilead4gwt</artifactId>
+			<version>${gileadVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junitVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>br.com.digitro</groupId>
+			<artifactId>dgt-query</artifactId>
+			<version>${queryVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>${jsoupVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.jboss.spec.javax.jms</groupId>
+			<artifactId>jboss-jms-api_1.1_spec</artifactId>
+			<version>${jmsVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-core</artifactId>
+			<version>${luceneVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>${luceneVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-queryparser</artifactId>
+			<version>${luceneVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
+		<artifact>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-highlighter</artifactId>
+			<version>${luceneVersion}</version>
+			<description>A dependência %s deve ser declarada utilizando a variável de versão %s</description>
+		</artifact>
 	</syntax>
 
 </configuration>

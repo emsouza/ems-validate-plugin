@@ -17,10 +17,9 @@ public class ValidateSyntaxUtil {
 		for (Dependency dep : dependencies) {
 			for (Dependency syt : syntax) {
 				if (dep.getGroupId().equalsIgnoreCase(syt.getGroupId())) {
-					if (dep.getArtifactId().equalsIgnoreCase(syt.getArtifactId())) {
-						System.out.println(dep.getVersion());
+					if (dep.getArtifactId().equalsIgnoreCase(syt.getArtifactId()) || syt.getArtifactId().equals("*")) {
 						if (!dep.getVersion().equalsIgnoreCase(syt.getVersion())) {
-							throw new MojoFailureException("[ " + projectName + " ] " + String.format(syt.getDescription(), syt, syt.getVersion()));
+							throw new MojoFailureException("[ " + projectName + " ] " + String.format(syt.getDescription(), dep, syt.getVersion()));
 						}
 					}
 				}

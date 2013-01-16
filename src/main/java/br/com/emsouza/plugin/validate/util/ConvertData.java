@@ -40,7 +40,8 @@ public class ConvertData {
 					Element artifactId = dependency.getChild("artifactId", ns);
 					Element version = dependency.getChild("version", ns);
 					Element scope = dependency.getChild("scope", ns);
-					list.add(new Dependency(groupId.getText(), artifactId.getText(), version.getText(), scope.getText(), null));
+					list.add(new Dependency(groupId.getText(), artifactId.getText(), version.getText(),
+							((scope != null && !scope.getText().isEmpty()) ? scope.getText() : "compile"), null));
 				}
 			}
 			return list;

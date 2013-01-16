@@ -20,7 +20,6 @@ import br.com.emsouza.plugin.validate.util.ValidateSyntaxUtil;
 /**
  * @author Eduardo Matos de Souza <br>
  *         13/09/2012 <br>
- * 
  * @goal validate
  * @phase validate
  */
@@ -66,26 +65,29 @@ public class ValidateMojo extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		// Verify if a project generate artifact
-		if (!project.getPackaging().equals("pom")) {
 
-			List<Dependency> dependencies = ConvertData.readProjectFile(pomFile);
-			Configuration cfg = ConfigurationFactory.build(configURL);
+		boolean execute = Boolean.parseBoolean(project.getProperties().getProperty("validate-plugin", "true"));
 
-			// Get the list of valid scopes
-			if (!ValidateScopeUtil.isValid(dependencies, cfg.getScopes())) {
-				throw new MojoFailureException("[ " + projectName + " ] Existem dependências declaradas fora do padrão => " + mavenDocURL);
+		if (execute) {
+			if (!project.getPackaging().equals("pom")) {
+
+				List<Dependency> dependencies = ConvertData.readProjectFile(pomFile);
+				Configuration cfg = ConfigurationFactory.build(configURL);
+
+				// Get the list of valid scopes
+				if (!ValidateScopeUtil.isValid(dependencies, cfg.getScopes())) {
+					throw new MojoFailureException("[ " + projectName + " ] Existem dependências declaradas fora do padrão => " + mavenDocURL);
+				}
+
+				// Verify exclude artifact
+				if (CollectionUtils.containsAny(dependencies, cfg.getExclusions())) {
+					Dependency art = (Dependency) ListUtils.intersection(dependencies, cfg.getExclusions()).get(0);
+					throw new MojoFailureException("[ " + projectName + " ] " + String.format(art.getDescription(), art));
+				}
+
+				// Verify correct Syntax
+				ValidateSyntaxUtil.validate(projectName, dependencies, cfg.getSyntax());
 			}
-
-
-			// Verify exclude artifact
-			if (CollectionUtils.containsAny(dependencies, cfg.getExclusions())) {
-				Dependency art = (Dependency) ListUtils.intersection(dependencies, cfg.getExclusions()).get(0);
-				throw new MojoFailureException("[ " + projectName + " ] " + String.format(art.getDescription(), art));
-			}
-
-			// Verify correct Syntax
-			ValidateSyntaxUtil.validate(projectName, dependencies, cfg.getSyntax());
 		}
 	}
 }
