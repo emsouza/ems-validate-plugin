@@ -50,34 +50,33 @@
 		</dependency>
 	</dependencies>
 
-	<distributionManagement>
-		<repository>
-			<id>digitro.libs</id>
-			<url>http://192.168.167.36/archiva/repository/digitro.libs</url>
-			<uniqueVersion>false</uniqueVersion>
-		</repository>
-	</distributionManagement>
+	<scm>
+		<connection>scm:git:https://github.com/emsouza/ems-validate-plugin.git</connection>
+		<url>scm:git:https://github.com/emsouza/ems-validate-plugin.git</url>
+		<developerConnection>scm:git:https://github.com/emsouza/ems-validate-plugin.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
 
 	<build>
 		<plugins>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>2.5.1</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
-					<fork>true</fork>
 				</configuration>
+				<inherited>true</inherited>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.9</version>
-				<configuration>
-					<projectNameTemplate>${project.name}</projectNameTemplate>
-				</configuration>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.4</version>
 			</plugin>
+
 		</plugins>
 	</build>
 </project>
