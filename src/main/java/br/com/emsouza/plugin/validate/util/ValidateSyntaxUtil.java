@@ -13,13 +13,13 @@ import br.com.emsouza.plugin.validate.model.Dependency;
  */
 public class ValidateSyntaxUtil {
 
-	public static void validate(String projectName, List<Dependency> dependencies, List<Dependency> syntax) throws MojoFailureException {
+	public static void validate(List<Dependency> dependencies, List<Dependency> syntax) throws MojoFailureException {
 		for (Dependency dep : dependencies) {
 			for (Dependency syt : syntax) {
 				if (dep.getGroupId().equalsIgnoreCase(syt.getGroupId())) {
 					if (dep.getArtifactId().equalsIgnoreCase(syt.getArtifactId()) || syt.getArtifactId().equals("*")) {
 						if (!dep.getVersion().equalsIgnoreCase(syt.getVersion())) {
-							throw new MojoFailureException("[ " + projectName + " ] " + String.format(syt.getDescription(), dep, syt.getVersion()));
+							throw new MojoFailureException(String.format(syt.getDescription(), dep, syt.getVersion()));
 						}
 					}
 				}
