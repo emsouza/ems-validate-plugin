@@ -29,7 +29,6 @@ import org.apache.commons.collections.ListUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -48,7 +47,6 @@ import br.com.emsouza.plugin.validate.util.ValidateSyntaxUtil;
  *         <a href="mailto:eduardomatosouza@gmail.com">eduardomatosouza@gmail.com</a>
  */
 @Mojo(name = "validate-pom", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
-@Execute(goal = "validate-pom", phase = LifecyclePhase.VALIDATE, lifecycle = "validate-pom")
 public class ValidatePomMojo extends AbstractMojo {
 
 	@Parameter(defaultValue = "${project}", readonly = true, required = true)
