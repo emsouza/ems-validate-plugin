@@ -49,43 +49,43 @@ import br.com.emsouza.plugin.validate.util.ValidateSyntaxUtil;
 @Mojo(name = "validate-pom", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class ValidatePomMojo extends AbstractMojo {
 
-	@Parameter(defaultValue = "${project}", readonly = true, required = true)
-	private MavenProject project;
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    private MavenProject project;
 
-	@Parameter(defaultValue = "${project.file}", readonly = true, required = true)
-	private File pomFile;
+    @Parameter(defaultValue = "${project.file}", readonly = true, required = true)
+    private File pomFile;
 
-	@Parameter(defaultValue = "${mavenDocURL}", readonly = true, required = true)
-	protected String mavenDocURL;
+    @Parameter(defaultValue = "${mavenDocURL}", readonly = true, required = true)
+    protected String mavenDocURL;
 
-	@Parameter(defaultValue = "${configURL}", readonly = true, required = true)
-	protected String configURL;
+    @Parameter(defaultValue = "${configURL}", readonly = true, required = true)
+    protected String configURL;
 
-	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
 
-		boolean execute = Boolean.parseBoolean(project.getProperties().getProperty("validate-plugin", "true"));
+        boolean execute = Boolean.parseBoolean(project.getProperties().getProperty("validate-plugin", "true"));
 
-		if (execute) {
-			if (!project.getPackaging().equals("pom")) {
+        if (execute) {
+            if (!project.getPackaging().equals("pom")) {
 
-				List<Dependency> dependencies = ConvertData.readProjectFile(pomFile);
-				Configuration cfg = ConfigurationFactory.build(configURL);
+                List<Dependency> dependencies = ConvertData.readProjectFile(pomFile);
+                Configuration cfg = ConfigurationFactory.build(configURL);
 
-				// Get the list of valid scopes
-				if (!ValidateScopeUtil.isValid(dependencies, cfg.getScopes())) {
-					throw new MojoFailureException("Existem dependências declaradas fora do padrão => " + mavenDocURL);
-				}
+                // Get the list of valid scopes
+                if (!ValidateScopeUtil.isValid(dependencies, cfg.getScopes())) {
+                    throw new MojoFailureException("Existem dependências declaradas fora do padrão => " + mavenDocURL);
+                }
 
-				// Verify exclude artifact
-				if (CollectionUtils.containsAny(dependencies, cfg.getExclusions())) {
-					Dependency art = (Dependency) ListUtils.intersection(dependencies, cfg.getExclusions()).get(0);
-					throw new MojoFailureException(String.format(art.getDescription(), art));
-				}
+                // Verify exclude artifact
+                if (CollectionUtils.containsAny(dependencies, cfg.getExclusions())) {
+                    Dependency art = (Dependency) ListUtils.intersection(dependencies, cfg.getExclusions()).get(0);
+                    throw new MojoFailureException(String.format(art.getDescription(), art));
+                }
 
-				// Verify correct Syntax
-				ValidateSyntaxUtil.validate(dependencies, cfg.getSyntax());
-			}
-		}
-	}
+                // Verify correct Syntax
+                ValidateSyntaxUtil.validate(dependencies, cfg.getSyntax());
+            }
+        }
+    }
 }
