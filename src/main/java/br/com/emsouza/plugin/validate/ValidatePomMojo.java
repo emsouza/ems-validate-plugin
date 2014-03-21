@@ -46,7 +46,7 @@ import br.com.emsouza.plugin.validate.util.ValidateSyntaxUtil;
  *         27/04/2013 <br>
  *         <a href="mailto:eduardomatosouza@gmail.com">eduardomatosouza@gmail.com</a>
  */
-@Mojo(name = "validate-pom", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
+@Mojo(name = "validate-pom", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true, requiresOnline = true)
 public class ValidatePomMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
