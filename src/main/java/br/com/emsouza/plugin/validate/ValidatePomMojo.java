@@ -21,25 +21,24 @@
  */
 package br.com.emsouza.plugin.validate;
 
-import java.io.File;
-import java.util.List;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.ListUtils;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-
 import br.com.emsouza.plugin.validate.factory.ConfigurationFactory;
 import br.com.emsouza.plugin.validate.model.Configuration;
 import br.com.emsouza.plugin.validate.model.Dependency;
 import br.com.emsouza.plugin.validate.util.ConvertData;
-import br.com.emsouza.plugin.validate.util.ValidateScopeUtil;
+import br.com.emsouza.plugin.validate.util.ValidateExclusionUtil;
 import br.com.emsouza.plugin.validate.util.ValidateSyntaxUtil;
+
+import java.util.List;
+
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
+import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * @author Eduardo Matos de Souza <br>
@@ -49,14 +48,13 @@ import br.com.emsouza.plugin.validate.util.ValidateSyntaxUtil;
 @Mojo(name = "validate-pom", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true, requiresOnline = true)
 public class ValidatePomMojo extends AbstractMojo {
 
+    private static final String POM = "pom";
+
+    @Component
+    private BuildContext buildContext;
+
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
-
-    @Parameter(defaultValue = "${project.file}", readonly = true, required = true)
-    private File pomFile;
-
-    @Parameter(defaultValue = "${mavenDocURL}", readonly = true, required = true)
-    protected String mavenDocURL;
 
     @Parameter(defaultValue = "${configURL}", readonly = true, required = true)
     protected String configURL;
@@ -67,24 +65,27 @@ public class ValidatePomMojo extends AbstractMojo {
         boolean execute = Boolean.parseBoolean(project.getProperties().getProperty("validate-plugin", "true"));
 
         if (execute) {
-            if (!project.getPackaging().equals("pom")) {
+            if (!POM.equals(project.getPackaging())) {
 
-                List<Dependency> dependencies = ConvertData.readProjectFile(pomFile);
+                List<Dependency> dependencies = ConvertData.readProjectFile(project.getFile());
+
                 Configuration cfg = ConfigurationFactory.build(configURL);
 
-                // Get the list of valid scopes
-                if (!ValidateScopeUtil.isValid(dependencies, cfg.getScopes())) {
-                    throw new MojoFailureException("Existem dependências declaradas fora do padrão => " + mavenDocURL);
-                }
+                boolean erros = false;
 
                 // Verify exclude artifact
-                if (CollectionUtils.containsAny(dependencies, cfg.getExclusions())) {
-                    Dependency art = (Dependency) ListUtils.intersection(dependencies, cfg.getExclusions()).get(0);
-                    throw new MojoFailureException(String.format(art.getDescription(), art));
+                erros = ValidateExclusionUtil.validate(project, buildContext, cfg, dependencies);
+
+                if (erros) {
+                    throw new MojoFailureException("Existem erros nas dependências do projeto.");
                 }
 
                 // Verify correct Syntax
-                ValidateSyntaxUtil.validate(dependencies, cfg.getSyntax());
+                erros = ValidateSyntaxUtil.validate(project, buildContext, dependencies, cfg.getSyntax());
+
+                if (erros) {
+                    throw new MojoFailureException("Existem erros nas dependências do projeto.");
+                }
             }
         }
     }

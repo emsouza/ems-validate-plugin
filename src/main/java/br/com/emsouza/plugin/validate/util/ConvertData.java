@@ -1,5 +1,7 @@
 package br.com.emsouza.plugin.validate.util;
 
+import br.com.emsouza.plugin.validate.model.Dependency;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,8 +15,6 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 
-import br.com.emsouza.plugin.validate.model.Dependency;
-
 /**
  * @author Eduardo Matos de Souza <br>
  *         Data: 08/01/2013 <br>
@@ -22,13 +22,15 @@ import br.com.emsouza.plugin.validate.model.Dependency;
  */
 public class ConvertData {
 
+    private static final String TEST = "test";
+
     private static Element rootElement;
 
     private static Document d;
 
     public static List<Dependency> readProjectFile(File file) throws MojoFailureException {
         try {
-            List<Dependency> list = new ArrayList<Dependency>();
+            List<Dependency> list = new ArrayList<>();
 
             rootElement = getContextElement(file);
             Namespace ns = rootElement.getNamespace();
@@ -41,7 +43,8 @@ public class ConvertData {
                     Element artifactId = dependency.getChild("artifactId", ns);
                     Element version = dependency.getChild("version", ns);
                     Element scope = dependency.getChild("scope", ns);
-                    list.add(new Dependency(groupId.getText(), artifactId.getText(), version.getText(),
+
+                    list.add(new Dependency(groupId.getText(), artifactId.getText(), (version != null ? version.getText() : null),
                             ((scope != null && !scope.getText().isEmpty()) ? scope.getText() : "compile"), null));
                 }
             }
@@ -49,7 +52,7 @@ public class ConvertData {
             Iterator<Dependency> it = list.iterator();
             while (it.hasNext()) {
                 Dependency dep = it.next();
-                if (dep.getScope().equalsIgnoreCase("test")) {
+                if (TEST.equalsIgnoreCase(dep.getScope())) {
                     it.remove();
                 }
             }
