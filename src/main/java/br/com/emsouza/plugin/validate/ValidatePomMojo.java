@@ -30,6 +30,7 @@ import br.com.emsouza.plugin.validate.util.ValidateSyntaxUtil;
 
 import java.util.List;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -50,6 +51,12 @@ public class ValidatePomMojo extends AbstractMojo {
 
     private static final String POM = "pom";
 
+    /**
+     * The Maven session
+     */
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    protected MavenSession session;
+
     @Component
     private BuildContext buildContext;
 
@@ -64,12 +71,13 @@ public class ValidatePomMojo extends AbstractMojo {
 
         boolean execute = Boolean.parseBoolean(project.getProperties().getProperty("validate-plugin", "true"));
 
-        if (execute) {
-            if (!POM.equals(project.getPackaging())) {
+        if (execute && !session.isOffline() && !POM.equals(project.getPackaging())) {
+
+            Configuration cfg = ConfigurationFactory.build(getLog(), configURL);
+
+            if (cfg != null) {
 
                 List<Dependency> dependencies = ConvertData.readProjectFile(project.getFile());
-
-                Configuration cfg = ConfigurationFactory.build(configURL);
 
                 boolean erros = false;
 
