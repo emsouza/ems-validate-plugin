@@ -14,8 +14,6 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class ValidateExclusionUtil {
 
-    private static final String DESCRICAO = "A dependência %s não é permitida. Utilize %s.";
-
     public static boolean validate(Log log, Configuration cfg, List<Dependency> dependencies) {
         boolean erros = false;
 
@@ -23,7 +21,7 @@ public class ValidateExclusionUtil {
             for (Dependency del : cfg.getExclusions()) {
                 if (dep.getGroupId().equalsIgnoreCase(del.getGroupId())) {
                     if (dep.getArtifactId().equalsIgnoreCase(del.getArtifactId()) || del.getArtifactId().equals("*")) {
-                        log.error(String.format(DESCRICAO, del, del.getDescription()));
+                        log.error(String.format(del.getDescription(), del));
 
                         erros = true;
                     }
