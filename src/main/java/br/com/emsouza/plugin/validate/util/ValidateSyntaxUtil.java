@@ -15,7 +15,7 @@ import org.apache.maven.plugin.logging.Log;
  */
 public class ValidateSyntaxUtil {
 
-    private static final String DESCRICAO = "A dependência %s deve ser declarada utilizando a variável de versão %s.";
+    private static final String DESCRICAO = "A dependência %s deve ser declarada utilizando a variável de versão %s";
 
     public static boolean validate(Log log, Configuration cfg, List<Dependency> dependencies) {
         boolean erros = false;
@@ -24,7 +24,7 @@ public class ValidateSyntaxUtil {
                 if (dep.getGroupId().equalsIgnoreCase(syt.getGroupId())) {
                     if (dep.getArtifactId().equalsIgnoreCase(syt.getArtifactId()) || syt.getArtifactId().equals("*")) {
                         if (dep.getVersion() != null) {
-                            erros = verificaVersao(log, dep, syt);
+                            erros = verificaVersao(log, erros, dep, syt);
                         }
                     }
                 }
@@ -33,7 +33,7 @@ public class ValidateSyntaxUtil {
         return erros;
     }
 
-    private static boolean verificaVersao(Log log, Dependency dep, Dependency syt) {
+    private static boolean verificaVersao(Log log, boolean erros, Dependency dep, Dependency syt) {
         List<String> versions = Arrays.asList(syt.getVersion().split("\\|"));
         boolean versaoErrada = !versions.stream().anyMatch((v) -> (dep.getVersion().equals(v) || dep.getVersion().startsWith(v)));
 
@@ -44,8 +44,9 @@ public class ValidateSyntaxUtil {
                 log.error(String.format(DESCRICAO, dep, syt.getVersion().replaceAll("\\|", ", ou iniciar com ")));
             }
 
-            return true;
+            erros = true;
         }
-        return false;
+
+        return erros;
     }
 }
