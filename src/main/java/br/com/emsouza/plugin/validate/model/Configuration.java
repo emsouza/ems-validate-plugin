@@ -9,7 +9,7 @@ import java.util.List;
  *         E-mail: eduardomatosouza@gmail.com
  */
 public class Configuration {
-
+	
 	private List<String> scopes;
 
 	private List<Dependency> exclusions;

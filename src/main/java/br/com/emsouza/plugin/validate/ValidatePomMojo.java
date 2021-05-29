@@ -44,57 +44,58 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 /**
  * @author Eduardo Matos de Souza <br>
  *         27/04/2013 <br>
- *         <a href="mailto:eduardomatosouza@gmail.com">eduardomatosouza@gmail.com</a>
+ *         <a href=
+ *         "mailto:eduardomatosouza@gmail.com">eduardomatosouza@gmail.com</a>
  */
 @Mojo(name = "validate-pom", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true, requiresOnline = true)
 public class ValidatePomMojo extends AbstractMojo {
 
-    private static final String POM = "pom";
+	private static final String POM = "pom";
 
-    /**
-     * The Maven session
-     */
-    @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    protected MavenSession session;
+	/**
+	 * The Maven session
+	 */
+	@Parameter(defaultValue = "${session}", readonly = true, required = true)
+	protected MavenSession session;
 
-    @Component
-    private BuildContext buildContext;
+	@Component
+	private BuildContext buildContext;
 
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject project;
+	@Parameter(defaultValue = "${project}", readonly = true, required = true)
+	private MavenProject project;
 
-    @Parameter(defaultValue = "${configURL}", readonly = true, required = true)
-    protected String configURL;
+	@Parameter(defaultValue = "${configURL}", readonly = true, required = true)
+	protected String configURL;
 
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+	@Override
+	public void execute() throws MojoExecutionException, MojoFailureException {
 
-        boolean execute = Boolean.parseBoolean(project.getProperties().getProperty("validate-plugin", "true"));
+		boolean execute = Boolean.parseBoolean(project.getProperties().getProperty("validate-plugin", "true"));
 
-        if (execute && !session.isOffline() && !POM.equals(project.getPackaging())) {
+		if (execute && !session.isOffline() && !POM.equals(project.getPackaging())) {
 
-            Configuration cfg = ConfigurationFactory.build(getLog(), configURL);
+			Configuration cfg = ConfigurationFactory.build(getLog(), configURL);
 
-            if (cfg != null) {
+			if (cfg != null) {
 
-                List<Dependency> dependencies = ConvertData.readProjectFile(project.getFile());
+				List<Dependency> dependencies = ConvertData.readProjectFile(project.getFile());
 
-                boolean erros = false;
+				boolean erros = false;
 
-                // Verify exclude artifact
-                erros = ValidateExclusionUtil.validate(project, buildContext, cfg, dependencies);
+				// Verify exclude artifact
+				erros = ValidateExclusionUtil.validate(project, buildContext, cfg, dependencies);
 
-                if (erros) {
-                    throw new MojoFailureException("Existem erros nas dependências do projeto.");
-                }
+				if (erros) {
+					throw new MojoFailureException("Existem erros nas dependências do projeto.");
+				}
 
-                // Verify correct Syntax
-                erros = ValidateSyntaxUtil.validate(project, buildContext, dependencies, cfg.getSyntax());
+				// Verify correct Syntax
+				erros = ValidateSyntaxUtil.validate(project, buildContext, cfg, dependencies);
 
-                if (erros) {
-                    throw new MojoFailureException("Existem erros nas dependências do projeto.");
-                }
-            }
-        }
-    }
+				if (erros) {
+					throw new MojoFailureException("Existem erros nas dependências do projeto.");
+				}
+			}
+		}
+	}
 }
