@@ -5,8 +5,7 @@ import br.com.emsouza.plugin.validate.model.Dependency;
 
 import java.util.List;
 
-import org.apache.maven.project.MavenProject;
-import org.sonatype.plexus.build.incremental.BuildContext;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author Eduardo Souza - SIS <br>
@@ -15,15 +14,16 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  */
 public class ValidateExclusionUtil {
 
-    public static boolean validate(MavenProject project, BuildContext bContext, Configuration cfg, List<Dependency> dependencies) {
+    private static final String DESCRICAO = "A dependência %s não é permitida. Utilize %s.";
+
+    public static boolean validate(Log log, Configuration cfg, List<Dependency> dependencies) {
         boolean erros = false;
-        // Verify exclude artifact
 
         for (Dependency dep : dependencies) {
             for (Dependency del : cfg.getExclusions()) {
                 if (dep.getGroupId().equalsIgnoreCase(del.getGroupId())) {
                     if (dep.getArtifactId().equalsIgnoreCase(del.getArtifactId()) || del.getArtifactId().equals("*")) {
-                        bContext.addMessage(project.getFile(), 0, 0, String.format(del.getDescription(), del), BuildContext.SEVERITY_ERROR, null);
+                        log.error(String.format(DESCRICAO, del, del.getDescription()));
 
                         erros = true;
                     }

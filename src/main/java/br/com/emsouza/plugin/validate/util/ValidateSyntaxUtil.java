@@ -1,13 +1,12 @@
 package br.com.emsouza.plugin.validate.util;
 
+import br.com.emsouza.plugin.validate.model.Configuration;
+import br.com.emsouza.plugin.validate.model.Dependency;
+
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.maven.project.MavenProject;
-import org.sonatype.plexus.build.incremental.BuildContext;
-
-import br.com.emsouza.plugin.validate.model.Configuration;
-import br.com.emsouza.plugin.validate.model.Dependency;
+import org.apache.maven.plugin.logging.Log;
 
 /**
  * @author Eduardo Matos de Souza <br>
@@ -16,24 +15,37 @@ import br.com.emsouza.plugin.validate.model.Dependency;
  */
 public class ValidateSyntaxUtil {
 
-    public static boolean validate(MavenProject mavenProject, BuildContext buildContext, Configuration cfg, List<Dependency> dependencies) {
+    private static final String DESCRICAO = "A dependência %s deve ser declarada utilizando a variável de versão %s.";
+
+    public static boolean validate(Log log, Configuration cfg, List<Dependency> dependencies) {
         boolean erros = false;
         for (Dependency dep : dependencies) {
             for (Dependency syt : cfg.getSyntax()) {
                 if (dep.getGroupId().equalsIgnoreCase(syt.getGroupId())) {
                     if (dep.getArtifactId().equalsIgnoreCase(syt.getArtifactId()) || syt.getArtifactId().equals("*")) {
-                    	
-						List<String> versions =Arrays.asList(syt.getVersion().split("\\|"));
-                        if (dep.getVersion() != null && !versions.stream().anyMatch((v) -> dep.getVersion().startsWith(v))) {
-                            buildContext.addMessage(mavenProject.getFile(), 0, 0, String.format(syt.getDescription(), dep, syt.getVersion()),
-                                    BuildContext.SEVERITY_ERROR, null);
-
-                            erros = true;
+                        if (dep.getVersion() != null) {
+                            erros = verificaVersao(log, dep, syt);
                         }
                     }
                 }
             }
         }
         return erros;
+    }
+
+    private static boolean verificaVersao(Log log, Dependency dep, Dependency syt) {
+        List<String> versions = Arrays.asList(syt.getVersion().split("\\|"));
+        boolean versaoErrada = !versions.stream().anyMatch((v) -> (dep.getVersion().equals(v) || dep.getVersion().startsWith(v)));
+
+        if (versaoErrada) {
+            if (versions.size() == 1) {
+                log.error(String.format(DESCRICAO, dep, syt.getVersion()));
+            } else {
+                log.error(String.format(DESCRICAO, dep, syt.getVersion().replaceAll("\\|", ", ou iniciar com ")));
+            }
+
+            return true;
+        }
+        return false;
     }
 }

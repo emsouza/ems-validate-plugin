@@ -34,68 +34,62 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * @author Eduardo Matos de Souza <br>
  *         27/04/2013 <br>
- *         <a href=
- *         "mailto:eduardomatosouza@gmail.com">eduardomatosouza@gmail.com</a>
+ *         <a href= "mailto:eduardomatosouza@gmail.com">eduardomatosouza@gmail.com</a>
  */
 @Mojo(name = "validate-pom", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true, requiresOnline = true)
 public class ValidatePomMojo extends AbstractMojo {
 
-	private static final String POM = "pom";
+    private static final String POM = "pom";
 
-	/**
-	 * The Maven session
-	 */
-	@Parameter(defaultValue = "${session}", readonly = true, required = true)
-	protected MavenSession session;
+    /**
+     * The Maven session
+     */
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
+    protected MavenSession session;
 
-	@Component
-	private BuildContext buildContext;
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
+    private MavenProject project;
 
-	@Parameter(defaultValue = "${project}", readonly = true, required = true)
-	private MavenProject project;
+    @Parameter(defaultValue = "${configURL}", readonly = true, required = true)
+    protected String configURL;
 
-	@Parameter(defaultValue = "${configURL}", readonly = true, required = true)
-	protected String configURL;
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
 
-	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
+        boolean execute = Boolean.parseBoolean(project.getProperties().getProperty("validate-plugin", "true"));
 
-		boolean execute = Boolean.parseBoolean(project.getProperties().getProperty("validate-plugin", "true"));
+        if (execute && !session.isOffline()) {
 
-		if (execute && !session.isOffline() && !POM.equals(project.getPackaging())) {
+            Configuration cfg = ConfigurationFactory.build(getLog(), configURL);
 
-			Configuration cfg = ConfigurationFactory.build(getLog(), configURL);
+            if (cfg != null) {
 
-			if (cfg != null) {
+                List<Dependency> dependencies = ConvertData.readProjectFile(project.getFile(), POM.equals(project.getPackaging()));
 
-				List<Dependency> dependencies = ConvertData.readProjectFile(project.getFile());
+                boolean erros = false;
 
-				boolean erros = false;
+                // Verify exclude artifact
+                erros = ValidateExclusionUtil.validate(getLog(), cfg, dependencies);
 
-				// Verify exclude artifact
-				erros = ValidateExclusionUtil.validate(project, buildContext, cfg, dependencies);
+                if (erros) {
+                    throw new MojoFailureException("Existem dependências não permitidas.");
+                }
 
-				if (erros) {
-					throw new MojoFailureException("Existem erros nas dependências do projeto.");
-				}
+                // Verify correct Syntax
+                erros = ValidateSyntaxUtil.validate(getLog(), cfg, dependencies);
 
-				// Verify correct Syntax
-				erros = ValidateSyntaxUtil.validate(project, buildContext, cfg, dependencies);
-
-				if (erros) {
-					throw new MojoFailureException("Existem erros nas dependências do projeto.");
-				}
-			}
-		}
-	}
+                if (erros) {
+                    throw new MojoFailureException("Existem erros nas dependências do projeto.");
+                }
+            }
+        }
+    }
 }

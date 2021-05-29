@@ -26,13 +26,13 @@ public class ConvertData {
 
     private static Document document;
 
-    public static List<Dependency> readProjectFile(File file) throws MojoFailureException {
+    public static List<Dependency> readProjectFile(File file, boolean pom) throws MojoFailureException {
         try {
             List<Dependency> list = new ArrayList<>();
 
             rootElement = getContextElement(file);
             // Namespace ns = rootElement.getNamespace();
-            Element dependencies = rootElement.element("dependencies");
+            Element dependencies = buscaDependencias(pom);
 
             if (dependencies != null) {
                 List<Element> dps = dependencies.elements("dependency");
@@ -59,6 +59,16 @@ public class ConvertData {
         } catch (Exception e) {
             throw new MojoFailureException("Erro ao validar projeto", e);
         }
+    }
+
+    private static Element buscaDependencias(boolean pom) {
+        if (pom) {
+            Element dependencyManagement = rootElement.element("dependencyManagement");
+            if (dependencyManagement != null) {
+                return dependencyManagement.element("dependencies");
+            }
+        }
+        return rootElement.element("dependencies");
     }
 
     private static Element getContextElement(File file) throws DocumentException {
