@@ -49,9 +49,6 @@ public class ValidatePomMojo extends AbstractMojo {
 
     private static final String POM = "pom";
 
-    /**
-     * The Maven session
-     */
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
     protected MavenSession session;
 
